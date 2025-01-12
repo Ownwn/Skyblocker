@@ -11,10 +11,13 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Colors;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DeployableOverlay {
 
 	private static Deployables current = Deployables.NONE;
+	private static Pattern deployablePattern = Pattern.compile("^([A-Za-z ]+) (\\d{1,3})s$");
 
 	@Init
 	public static void init() {
@@ -23,6 +26,8 @@ public class DeployableOverlay {
 				return;
 			}
 
+			// todo plasmaflux is 20 blocks not 18
+			// todo change to 18 not 8
 			List<ArmorStandEntity> armorStands = client.world.getEntitiesByClass(ArmorStandEntity.class, client.player.getBoundingBox().expand(8d), EntityPredicates.NOT_MOUNTED);
 			refreshDeployable(armorStands);
 
@@ -41,36 +46,38 @@ public class DeployableOverlay {
 		current = Deployables.NONE;
 
 		for (ArmorStandEntity armorStand : armorStands) {
-			Iterable<ItemStack> equippedItems = armorStand.getEquippedItems();
+			String name = armorStand.getName().getString();
+			if (!name.endsWith("s")) { // nametag should end with 's' for num of seconds left
+				System.out.println(name);
+				return;
+			}
 
-			for (ItemStack stack : equippedItems) {
-				Optional<String> textureOptional = ItemUtils.getHeadTextureOptional(stack);
-				if (textureOptional.isPresent()) {
-					String texture = textureOptional.get();
-					texture = texture.substring(0, texture.length() - 1); // has '=' at end. todo what am i doing wrong
+			Matcher deployableMatcher = deployablePattern.matcher(name);
+			if (!deployableMatcher.find()) {
+				return;
+			}
 
-					Deployables deployable = deployablesMap.get(texture);
+			Deployables deployable = deployablesMap.get(deployableMatcher.group(1));
+			int timeLeft = Integer.parseInt(deployableMatcher.group(2));
 
-					if (deployable != null && deployable.priority > current.priority) {
-						current = deployable;
-					}
-				}
+			if (deployable != null && deployable.priority > current.priority) {
+				current = deployable;
 			}
 		}
 	}
 
 	public static final Map<String, Deployables> deployablesMap = new HashMap<>() {{
-		put("ewogICJ0aW1lc3RhbXAiIDogMTYwNzQ0Nzk4NTQxNCwKICAicHJvZmlsZUlkIiA6ICI2OTBkMDM2OGM2NTE0OGM5ODZjMzEwN2FjMmRjNjFlYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJ5emZyXzciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk0ZDBhMDY4ZWE1MGE5ZGUyY2VmMjNhOTJiY2E0YjM2NzhkMTJjYThhMTgxNWQxM2JlYWM5NGRmZDU1NzEyNSIKICAgIH0KICB9Cn0"
-				, Deployables.RADIANT);
-
-		put("ewogICJ0aW1lc3RhbXAiIDogMTYyMTM0MjI5MzI5NiwKICAicHJvZmlsZUlkIiA6ICI5MThhMDI5NTU5ZGQ0Y2U2YjE2ZjdhNWQ1M2VmYjQxMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJCZWV2ZWxvcGVyIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzgyYWRhMWM3ZmNjOGNmMzVkZWZlYjk0NGE0ZjhmZmE5YTlkMjYwNTYwZmM3ZjVmNTgyNmRlODA4NTQzNTk2N2MiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ"
-				, Deployables.MANA_FLUX);
+		put("Radiant", Deployables.RADIANT);
+		put("Mana Flux", Deployables.MANA_FLUX);
+		put("Overflux", Deployables.OVER_FLUX);
 	}};
 
 	public enum Deployables {
 		NONE(-1),
 		RADIANT(1),
-		MANA_FLUX(2);
+		MANA_FLUX(2),
+		OVER_FLUX(3),
+		PLASMA_FLUX(4);
 
 		private final int priority;
 
