@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
@@ -15,6 +16,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Formatting;
 
 import java.util.*;
@@ -25,6 +29,7 @@ public class DeployableOverlay {
 
 	private static Deployable current = null;
 	private static final Pattern deployablePattern = Pattern.compile("^([A-Za-z ]+) (\\d{1,3})s$"); // e.g. "Radiant 20s"
+	private static long lastWarn = 0;
 
 	public static final Map<String, DeployableType> deployablesMap = new Object2ObjectOpenHashMap<>(); // todo correct hashmap type?
 
@@ -105,6 +110,8 @@ public class DeployableOverlay {
 			if (type != null && (current == null || type.priority > current.type.priority)) {
 				current = new Deployable(type, timeLeft);
 			}
+
+			playExpiredWarning();
 		}
 	}
 
@@ -127,6 +134,21 @@ public class DeployableOverlay {
 			this.stack = stack;
 			this.skullTexture = skullTexture;
 			this.name = name;
+		}
+	}
+
+	private static void playExpiredWarning() {
+		if (current.timeLeft == 0 && SkyblockerConfigManager.get().uiAndVisuals.deployableOverlayConfig.warnWhenExpiring) {
+			if (System.currentTimeMillis() - lastWarn > 1000) { // > 1 second since last warn
+				lastWarn = System.currentTimeMillis();
+
+				ClientPlayerEntity player = MinecraftClient.getInstance().player;
+				player.playSound(SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE);
+
+				// todo is this correct?
+				MinecraftClient.getInstance().inGameHud.setTitleTicks(0, 30, 0);
+				MinecraftClient.getInstance().inGameHud.setTitle(Text.literal("Power orb expired!").withColor(Colors.RED));
+			}
 		}
 	}
 
