@@ -933,6 +933,14 @@
   "skyblocker.config.uiAndVisuals.waypoints.waypointType.@Tooltip": "Waypoint: Displays a highlight and a beacon beam.\n\nOutlined Waypoint: Displays both a waypoint and an outline.\n\nHighlight: Only displays a highlight.\n\nOutlined Highlight: Displays both a highlight and an outline.\n\nOutline: Only displays an outline.",
   "skyblocker.config.uiAndVisuals.waypoints.waypointType.generalNote": "\n\n\nThis option does not apply to all waypoints. Some waypoints such as secret waypoints have their own waypoint type option.",
 
+  "skyblocker.config.uiAndVisuals.deployableOverlayConfig": "Deployable Overlay",
+  "skyblocker.config.uiAndVisuals.deployableOverlayConfig.enabled": "Enabled",
+  "skyblocker.config.uiAndVisuals.deployableOverlayConfig.enabled.@Tooltip": "Display the best nearby deployable item on your screen",
+  "skyblocker.config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring": "Warn when expiring",
+  "skyblocker.config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring.@Tooltip": "Sends an alert when the best deployable is about to expire",
+
+
+
   "skyblocker.updateNotifications.newUpdateMessage": "There's a new Skyblocker update available! %s",
   "skyblocker.updateNotifications.newUpdateToast.title": "Skyblocker Update Available!",
   "skyblocker.updateNotifications.newUpdateToast.description": "Download version %s!",

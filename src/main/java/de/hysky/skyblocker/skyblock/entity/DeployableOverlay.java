@@ -1,6 +1,7 @@
 package de.hysky.skyblocker.skyblock.entity;
 
 import de.hysky.skyblocker.annotations.Init;
+import de.hysky.skyblocker.config.SkyblockerConfigManager;
 import de.hysky.skyblocker.events.HudRenderEvents;
 import de.hysky.skyblocker.utils.ItemUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -43,6 +44,11 @@ public class DeployableOverlay {
 	public static void init() {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.world == null || client.player == null) {
+				return;
+			}
+
+			if (!SkyblockerConfigManager.get().uiAndVisuals.deployableOverlayConfig.enabled) {
+				current = null;
 				return;
 			}
 

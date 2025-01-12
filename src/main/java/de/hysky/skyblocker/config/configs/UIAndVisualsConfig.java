@@ -82,6 +82,9 @@ public class UIAndVisualsConfig {
     @SerialEntry
     public CompactDamage compactDamage = new CompactDamage();
 
+	@SerialEntry
+	public DeployableOverlayConfig deployableOverlayConfig = new DeployableOverlayConfig();
+
     public static class ChestValue {
         @SerialEntry
         public boolean enableChestValue = true;
@@ -389,4 +392,12 @@ public class UIAndVisualsConfig {
         @SerialEntry
         public Color critDamageGradientEnd = new Color(0xFF5555);
     }
+
+	public static class DeployableOverlayConfig {
+		@SerialEntry
+		public boolean enabled = true;
+
+		@SerialEntry
+		public boolean warnWhenExpiring = false;
+	}
 }

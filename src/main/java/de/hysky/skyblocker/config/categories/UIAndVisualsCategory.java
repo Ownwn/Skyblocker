@@ -547,6 +547,29 @@ public class UIAndVisualsCategory {
                         .build()
                 )
 
+				// Deployable Overlay
+				.group(OptionGroup.createBuilder()
+						.name(Text.translatable("skyblocker.config.uiAndVisuals.deployableOverlayConfig"))
+						.collapsed(true)
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.translatable("skyblocker.config.uiAndVisuals.deployableOverlayConfig.enabled"))
+								.description(OptionDescription.of(Text.translatable("skyblocker.config.uiAndVisuals.deployableOverlayConfig.enabled.@Tooltip")))
+								.binding(defaults.uiAndVisuals.deployableOverlayConfig.enabled,
+										() -> config.uiAndVisuals.deployableOverlayConfig.enabled,
+										newValue -> config.uiAndVisuals.deployableOverlayConfig.enabled = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.translatable("skyblocker.config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring"))
+								.description(OptionDescription.of(Text.translatable("skyblocker.config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring.@Tooltip")))
+								.binding(defaults.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring,
+										() -> config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring,
+										newValue -> config.uiAndVisuals.deployableOverlayConfig.warnWhenExpiring = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
+						.build()
+				)
+
                 .build();
     }
 
